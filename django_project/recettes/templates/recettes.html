@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recettes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            Blue: '#2c7373', /* Bleu inspiré du logo */
+            Red: '#ff7f50',  /* Rouge inspiré du logo */
+          },
+        },
+      },
+    };
+  </script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <!-- Header -->
+  <header class="bg-Blue text-white py-6 shadow-lg">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-4xl font-extrabold tracking-wide">Recettes</h1>
+      <p class="text-lg font-light mt-2">Simplifiez vos plats et gagnez en temps</p>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex flex-col items-center justify-center p-4 min-h-screen">
+    <!-- Data Table -->
+    <form method="GET" class="flex justify-center mb-6 w-full max-w-6xl">
+      <input type="text" name="search" value="{{ request.GET.search|default:'' }}" 
+             placeholder="Rechercher dans toutes les recettes" 
+             class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-Blue focus:outline-none">
+      <button type="submit" 
+              class="ml-2 bg-Blue text-white py-2 px-4 rounded-lg shadow hover:bg-blue-700 transition">
+        Rechercher
+      </button>
+    </form>     
+    <div class="flex flex-col items-center justify-center w-full">
+      <div class="flex overflow-x-auto w-full max-w-6xl">
+        <table class="min-w-full border-collapse rounded-lg shadow-lg">
+          <thead class="bg-Blue text-white">
+            <tr>
+              <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">Titre</th>
+              <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">Catégories</th>
+              <th class="px-6 py-3 text-center font-medium uppercase tracking-wider">Descriptif</th>
+              <th class="px-6 py-3 text-center font-medium uppercase tracking-wider">Temps</th>
+              <th class="px-6 py-3 text-center font-medium uppercase tracking-wider">Image</th>
+              <th class="px-6 py-3 text-center font-medium uppercase tracking-wider">Détails</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {% for row in rows %}
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4">{{ row.titre }}</td>
+              <td class="px-6 py-4">
+                {{ row.categorie.nom }} <!-- Affiche le nom de la catégorie liée -->
+              </td>
+              <td class="px-6 py-4 text-center">
+                {{ row.description }}
+              </td>
+              <td class="px-6 py-4 text-center">
+                {{ row.temps_preparation }} minutes
+              </td>
+              <td class="px-6 py-4 text-center">
+                {% if row.image %}
+                <img src="{{ row.image.url }}" alt="Image de la recette" class="w-16 h-16 rounded-lg">
+                {% else %}
+                <span class="text-gray-400 italic">Pas d'image</span>
+                {% endif %}
+              </td>
+              <td class="px-6 py-4 text-center">
+                <a href="/recettes/{{ row.id }}" class="text-Blue font-semibold underline hover:text-blue-600">Voir la recette</a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="px-6 py-4 text-center text-gray-500 italic">Aucune recette disponible.</td>
+            </tr>
+            {% endfor %}
+          </tbody>          
+        </table>
+      </div>
+
+      <!-- Back Link -->
+      <a href="/manage" class="mt-4 text-Blue font-semibold underline hover:text-blue-600">Ajouter une recette</a>
+    </div>
+  </main>
+</body>
+</html>

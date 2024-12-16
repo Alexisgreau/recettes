@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Détails de la recette</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            Blue: '#2c7373', /* Bleu inspiré du logo */
+            Red: '#ff7f50',  /* Rouge inspiré du logo */
+          },
+        },
+      },
+    };
+  </script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <!-- Header -->
+  <header class="bg-Blue text-white py-6 shadow-lg">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-4xl font-extrabold tracking-wide">{{ recette.titre }}</h1>
+      <p class="text-lg font-light mt-2">Découvrez tous les détails de cette recette</p>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex flex-col items-center justify-center p-4 min-h-screen">
+    <div class="flex flex-col items-center w-full max-w-4xl bg-white rounded-lg shadow-lg p-6">
+      <!-- Image -->
+      {% if recette.image %}
+      <div class="mb-6">
+        <img src="{{ recette.image.url }}" alt="Image de {{ recette.titre }}" class="w-full h-auto rounded-lg shadow">
+      </div>
+      {% endif %}
+
+      <!-- Description -->
+      <section class="mb-6 w-full">
+        <h2 class="text-2xl font-bold text-Blue mb-2">Description</h2>
+        <p class="text-gray-700">{{ recette.description }}</p>
+      </section>
+
+      <!-- Ingrédients -->
+      <section class="mb-6 w-full">
+        <h2 class="text-2xl font-bold text-Blue mb-2">Ingrédients</h2>
+        <ul class="list-disc pl-6 text-gray-700">
+          {% for ingredient in recette.ingredients.splitlines %}
+          <li>{{ ingredient }}</li>
+          {% empty %}
+          <li class="text-gray-500 italic">Aucun ingrédient spécifié.</li>
+          {% endfor %}
+        </ul>
+      </section>
+
+      <!-- Étapes -->
+      <section class="mb-6 w-full">
+        <h2 class="text-2xl font-bold text-Blue mb-2">Étapes</h2>
+        <p class="text-gray-700 whitespace-pre-line">{{ recette.etapes }}</p>
+      </section>
+
+      <!-- Temps -->
+      <section class="mb-6 w-full">
+        <h2 class="text-2xl font-bold text-Blue mb-2">Temps</h2>
+        <p class="text-gray-700"><strong>Préparation :</strong> {{ recette.temps_preparation }} minutes</p>
+        <p class="text-gray-700"><strong>Cuisson :</strong> {{ recette.temps_cuisson }} minutes</p>
+      </section>
+
+      <!-- Catégorie -->
+      <section class="mb-6 w-full">
+        <h2 class="text-2xl font-bold text-Blue mb-2">Catégorie</h2>
+        <p class="text-gray-700">{{ recette.categorie.nom }}</p>
+      </section>
+
+      <!-- Back Link -->
+      <a href="/" class="mt-4 text-Blue font-semibold underline hover:text-blue-600">Retour à la liste des recettes</a>
+    </div>
+  </main>
+</body>
+</html>

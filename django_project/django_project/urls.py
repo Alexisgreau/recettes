@@ -23,4 +23,5 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('manage/', views.manage, name='manage'),
     path('add_category/', views.add_category, name='add_category'),
+    path('recette/<int:pk>', views.details, name='details'),
 ]

@@ -76,3 +76,7 @@ def add_category(request):
             messages.error(request, 'Le nom de la catégorie est obligatoire.')
 
     return render(request, 'manage_cat.html')
+
+def details(request, pk):
+    recette = Recette.objects.get(pk=pk)
+    return render(request, 'details.html', {'recette': recette})

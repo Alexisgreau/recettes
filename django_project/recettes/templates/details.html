@@ -92,6 +92,13 @@
             Retour à la liste des recettes
           </a>
         </div>
+        <!-- Bouton Modifier -->
+        <div class="text-center mt-6">
+          <a href="{% url 'modifier_recette' recette.id %}" 
+            class="inline-block bg-Red text-white px-4 py-2 rounded-md shadow hover:bg-red-600 transition">
+            Modifier la Recette
+          </a>
+        </div>
       </div>
     </div>
   </main>

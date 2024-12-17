@@ -32,4 +32,5 @@ urlpatterns = [
     path('accounts/profile/', views.profile, name='profile'),
     path('toggle_favoris/<int:pk>', views.toggle_favoris, name='toggle_favoris'),
     path('favoris/', views.fav_view, name='favoris'),
+    path('recette/<int:pk>/modifier/', views.modifier_recette, name='modifier_recette'),
 ]

@@ -6,6 +6,7 @@ from django.contrib.auth import login, logout
 from django import forms
 from django.contrib.auth.models import User
 from django.conf import settings
+from .forms import RecetteForm
 
 def home(request):
     rows = Recette.objects.all()
@@ -122,3 +123,14 @@ def toggle_favoris(request, pk):
 def fav_view(request):
     recettes = Recette.objects.filter(favoris__user=request.user)
     return render(request, 'favoris.html', {'rows': recettes})
+
+def modifier_recette(request, pk):
+    recette = get_object_or_404(Recette, pk=pk)
+    if request.method == 'POST':
+        form = RecetteForm(request.POST, request.FILES, instance=recette)
+        if form.is_valid():
+            form.save()
+            return redirect('details', pk=recette.pk)  # Redirection vers la page de détails
+    else:
+        form = RecetteForm(instance=recette)
+    return render(request, 'modifier_recette.html', {'form': form, 'recette': recette})

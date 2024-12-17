@@ -17,6 +17,7 @@ class Recette(models.Model):
     temps_preparation = models.IntegerField()
     temps_cuisson = models.IntegerField()
     ingredients = models.TextField()
+    etapes = models.TextField()
     image = models.ImageField(upload_to='images/', null=True, blank=True)
 
     def __str__(self):

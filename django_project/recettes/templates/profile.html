@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Mon profil</title>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            Blue: '#2c7373',
+            Red: '#ff7f50',
+          },
+        },
+      },
+    };
+  </script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <!-- Header -->
+  <header class="bg-Blue text-white py-6 shadow-lg">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between">
+        <div class="text-left">
+          <h1 class="text-4xl font-extrabold tracking-wide">Recettes</h1>
+          <p class="text-lg font-light mt-2">Simplifiez vos plats et gagnez du temps</p>
+        </div>
+        <div>
+          {% if request.user.is_authenticated %}
+            <div class="flex items-center space-x-4">
+              <span class="font-semibold">Bonjour, {{ request.user.username }} !</span>
+              <a href="{% url 'logout' %}" class="underline text-white hover:text-Red transition">Déconnexion</a>
+            </div>
+          {% else %}
+            <a href="{% url 'login' %}" class="underline text-white hover:text-Red transition">Connexion</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex flex-col items-center justify-center p-4 min-h-screen">
+    <div class="bg-white p-8 shadow-lg rounded-md w-full max-w-md">
+      <h1 class="text-2xl font-bold mb-4">Mon profil</h1>
+      {% if request.user.is_authenticated %}
+        <div class="space-y-4">
+          <div>
+            <span class="block font-semibold">Nom d’utilisateur :</span>
+            <span class="block mt-1">{{ request.user.username }}</span>
+          </div>
+          <div>
+            <span class="block font-semibold">Adresse e-mail :</span>
+            <span class="block mt-1">{{ request.user.email }}</span>
+          </div>
+        </div>
+        
+        <!-- Bouton pour éventuellement éditer le profil ou retourner à la page d’accueil -->
+        <div class="mt-6 flex items-center space-x-4">
+          <a href="/" class="bg-Blue text-white py-2 px-4 rounded-lg shadow hover:bg-teal-800 transition">Retour à l'accueil</a>
+        </div>
+      {% else %}
+        <p class="text-gray-500 italic">Vous n'êtes pas connecté.</p>
+        <a href="{% url 'login' %}" class="mt-4 inline-block underline text-Blue hover:text-teal-800 transition">Se connecter</a>
+      {% endif %}
+    </div>
+  </main>
+</body>
+</html>

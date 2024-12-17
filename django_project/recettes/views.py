@@ -1,26 +1,18 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Categorie, Recette
-from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, logout
+from django import forms
+from django.contrib.auth.models import User
+from django.conf import settings
 
 def home(request):
     recettes = Recette.objects.all()  # Récupère toutes les recettes
-
-    # Gestion de la recherche
-    query = request.GET.get('search', '')
-    if query:
-        recettes = recettes.filter(
-            Q(titre__icontains=query) |
-            Q(description__icontains=query) |
-            Q(ingredients__icontains=query) |
-            Q(etapes__icontains=query) |
-            Q(categorie__nom__icontains=query)
-        )
-
     return render(request, 'recettes.html', {'rows': recettes})
 
 
-
+@login_required
 def manage(request):
     if request.method == 'POST':
         # Récupère les données du formulaire
@@ -80,3 +72,30 @@ def add_category(request):
 def details(request, pk):
     recette = Recette.objects.get(pk=pk)
     return render(request, 'details.html', {'recette': recette})
+
+class SignupForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            password = form.cleaned_data['password']
+            user.set_password(password)
+            user.save()
+            login(request, user)
+            return redirect('/')
+    else:
+        form = SignupForm()
+    return render(request, 'signup.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect(settings.LOGOUT_REDIRECT_URL)
+
+def profile(request):
+    return render(request, 'profile.html')

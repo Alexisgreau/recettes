@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from recettes import views
+from django.contrib.auth import views as auth_views
+from recettes.views import signup_view, logout_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +26,8 @@ urlpatterns = [
     path('manage/', views.manage, name='manage'),
     path('add_category/', views.add_category, name='add_category'),
     path('recette/<int:pk>', views.details, name='details'),
+    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('logout/', logout_view, name='logout'),
+    path('signup/', signup_view, name='signup'),
+    path('accounts/profile/', views.profile, name='profile'),
 ]

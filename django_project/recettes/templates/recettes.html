@@ -10,35 +10,74 @@
       theme: {
         extend: {
           colors: {
-            Blue: '#2c7373', /* Bleu inspiré du logo */
-            Red: '#ff7f50',  /* Rouge inspiré du logo */
+            Blue: '#2c7373',
+            Red: '#ff7f50',
           },
         },
       },
     };
+
+    function filterTable() {
+      const query = document.getElementById('search-input').value.toLowerCase();
+      const rows = document.querySelectorAll('table tbody tr');
+
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        let rowMatches = false;
+
+        // On vérifie chaque cellule de la ligne
+        cells.forEach(cell => {
+          const text = cell.textContent.toLowerCase();
+          if (text.includes(query)) {
+            rowMatches = true;
+          }
+        });
+
+        if (rowMatches) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
   </script>
 </head>
 <body class="bg-gray-100 text-gray-800">
   <!-- Header -->
   <header class="bg-Blue text-white py-6 shadow-lg">
-    <div class="container mx-auto px-4 text-center">
-      <h1 class="text-4xl font-extrabold tracking-wide">Recettes</h1>
-      <p class="text-lg font-light mt-2">Simplifiez vos plats et gagnez en temps</p>
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between">
+        <div class="text-left">
+          <h1 class="text-4xl font-extrabold tracking-wide">Recettes</h1>
+          <p class="text-lg font-light mt-2">Simplifiez vos plats et gagnez du temps</p>
+        </div>
+        <div>
+          {% if request.user.is_authenticated %}
+            <div class="flex items-center space-x-4">
+              <span class="font-semibold">Bonjour, {{ request.user.username }} !</span>
+              <a href="{% url 'logout' %}" class="underline text-white hover:text-Red transition">Déconnexion</a>
+            </div>
+          {% else %}
+            <a href="{% url 'login' %}" class="underline text-white hover:text-Red transition">
+              Connexion
+            </a>
+          {% endif %}
+        </div>
+      </div>
     </div>
-  </header>
-
+  </header>   
   <!-- Main Content -->
   <main class="flex flex-col items-center justify-center p-4 min-h-screen">
-    <!-- Data Table -->
-    <form method="GET" class="flex justify-center mb-6 w-full max-w-6xl">
-      <input type="text" name="search" value="{{ request.GET.search|default:'' }}" 
-             placeholder="Rechercher dans toutes les recettes" 
+    <!-- Barre de recherche côté client (multi-colonnes) -->
+    <div class="flex justify-center mb-6 w-full max-w-6xl">
+      <input type="text" 
+             id="search-input" 
+             onkeyup="filterTable()" 
+             placeholder="Rechercher dans toutes les colonnes" 
              class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-Blue focus:outline-none">
-      <button type="submit" 
-              class="ml-2 bg-Blue text-white py-2 px-4 rounded-lg shadow hover:bg-blue-700 transition">
-        Rechercher
-      </button>
-    </form>     
+    </div>
+
+    <!-- Data Table -->
     <div class="flex flex-col items-center justify-center w-full">
       <div class="flex overflow-x-auto w-full max-w-6xl">
         <table class="min-w-full border-collapse rounded-lg shadow-lg">
@@ -57,7 +96,7 @@
             <tr class="hover:bg-gray-50">
               <td class="px-6 py-4">{{ row.titre }}</td>
               <td class="px-6 py-4">
-                {{ row.categorie.nom }} <!-- Affiche le nom de la catégorie liée -->
+                {{ row.categorie.nom }}
               </td>
               <td class="px-6 py-4 text-center">
                 {{ row.description }}

@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recettes</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <title>Recettes</title>
+  <!-- Tailwind CSS Configuration -->
   <script>
     tailwind.config = {
       theme: {
@@ -12,138 +13,135 @@
           colors: {
             Blue: '#2c7373',
             Red: '#ff7f50',
+            LightGray: '#f7f8fa',
           },
         },
       },
     };
+  </script>
 
+  <!-- Script pour filtrer les recettes -->
+  <script>
     function filterTable() {
       const query = document.getElementById('search-input').value.toLowerCase();
       const rows = document.querySelectorAll('table tbody tr');
 
       rows.forEach(row => {
         const cells = row.querySelectorAll('td');
-        let rowMatches = false;
-
-        // On vérifie chaque cellule de la ligne
-        cells.forEach(cell => {
-          const text = cell.textContent.toLowerCase();
-          if (text.includes(query)) {
-            rowMatches = true;
-          }
-        });
-
-        if (rowMatches) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
+        const rowMatches = Array.from(cells).some(cell =>
+          cell.textContent.toLowerCase().includes(query)
+        );
+        row.style.display = rowMatches ? '' : 'none';
       });
     }
   </script>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-LightGray text-gray-800">
+
   <!-- Header -->
-  <header class="bg-Blue text-white py-6 shadow-lg">
-    <div class="container mx-auto px-4">
-      <div class="flex items-center justify-between">
-        <div class="text-left">
-          <h1 class="text-4xl font-extrabold tracking-wide">Recettes</h1>
-          <p class="text-lg font-light mt-2">Simplifiez vos plats et gagnez du temps</p>
-        </div>
-        <div>
-          {% if request.user.is_authenticated %}
-            <div class="flex items-center space-x-4">
-              <span class="font-semibold">Bonjour, {{ request.user.username }} !</span>
-              <a href="{% url 'logout' %}" class="underline text-white hover:text-Red transition">Déconnexion</a>
-            </div>
-          {% else %}
-            <a href="{% url 'login' %}" class="underline text-white hover:text-Red transition">
-              Connexion
+  <header class="bg-Blue text-white py-4 shadow-md">
+    <div class="container mx-auto px-4 flex justify-between items-center">
+      <div>
+        <h1 class="text-3xl font-extrabold tracking-wide">Recettes</h1>
+        <p class="text-sm font-light mt-1">Simplifiez vos plats et gagnez du temps</p>
+      </div>
+      <div>
+        {% if request.user.is_authenticated %}
+          <div class="flex items-center space-x-4">
+            <span class="font-semibold">Bonjour, {{ request.user.username }} !</span>
+            <a href="{% url 'logout' %}" class="bg-Red px-3 py-1 rounded text-sm hover:bg-red-600 transition">
+              Déconnexion
             </a>
-          {% endif %}
-        </div>
+          </div>
+        {% else %}
+          <a href="{% url 'login' %}" class="bg-Red px-3 py-1 rounded text-sm hover:bg-red-600 transition">
+            Connexion
+          </a>
+        {% endif %}
       </div>
     </div>
-  </header>   
+  </header>
+
   <!-- Main Content -->
-  <main class="flex flex-col items-center justify-center p-4 min-h-screen">
-    <!-- Barre de recherche côté client (multi-colonnes) -->
-    <div class="flex justify-center mb-6 w-full max-w-6xl">
-      <input type="text" 
-             id="search-input" 
-             onkeyup="filterTable()" 
-             placeholder="Rechercher dans toutes les colonnes" 
-             class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-Blue focus:outline-none">
+  <main class="p-6">
+    <!-- Barre de recherche -->
+    <div class="container mx-auto mb-6">
+      <input type="text" id="search-input" onkeyup="filterTable()" 
+             placeholder="Rechercher une recette..." 
+             class="w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:ring-2 focus:ring-Blue focus:outline-none">
     </div>
 
-    <!-- Data Table -->
-    <div class="flex flex-col items-center justify-center w-full">
-      <div class="flex overflow-x-auto w-full max-w-6xl">
-        <table class="min-w-full border-collapse rounded-lg shadow-lg">
-          <thead class="bg-Blue text-white">
-            <tr>
-              <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">Titre</th>
-              <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">Catégories</th>
-              <th class="px-6 py-3 text-center font-medium uppercase tracking-wider">Descriptif</th>
-              <th class="px-6 py-3 text-center font-medium uppercase tracking-wider">Temps</th>
-              <th class="px-6 py-3 text-center font-medium uppercase tracking-wider">Favoris</th>
-              <th class="px-6 py-3 text-center font-medium uppercase tracking-wider">Image</th>
-              <th class="px-6 py-3 text-center font-medium uppercase tracking-wider">Détails</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {% for row in rows %}
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4">{{ row.titre }}</td>
-              <td class="px-6 py-4">
-                {{ row.categorie.nom }}
-              </td>
-              <td class="px-6 py-4 text-center">
-                {{ row.description }}
-              </td>
-              <td class="px-6 py-4 text-center">
-                {{ row.temps_preparation }} minutes
-              </td>
-              <td class="px-6 py-4 text-center">
-                {% if row.id in favoris_ids %}
-                  <span class="text-Red font-semibold">Oui</span>
-                  <a href="{% url 'toggle_favoris' row.pk %}"
-                     class="inline-block bg-Red text-white text-sm px-2 py-1 ml-2 rounded-md hover:bg-red-600 transition">
-                    Retirer des Favoris
-                  </a>
-                {% else %}
-                  <span class="text-gray-400 font-semibold">Non</span>
-                  <a href="{% url 'toggle_favoris' row.pk %}"
-                     class="inline-block bg-Blue text-white text-sm px-2 py-1 ml-2 rounded-md hover:bg-teal-700 transition">
-                    Ajouter aux Favoris
-                  </a>
-                {% endif %}
-              </td>            
-              <td class="px-6 py-4 text-center">
-                {% if row.image %}
-                <img src="{{ row.image.url }}" alt="Image de la recette" class="w-16 h-16 rounded-lg">
-                {% else %}
+    <!-- Table des recettes -->
+    <div class="container mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+      <table class="min-w-full">
+        <thead class="bg-Blue text-white text-sm uppercase tracking-wider">
+          <tr>
+            <th class="px-4 py-3 text-left">Titre</th>
+            <th class="px-4 py-3 text-left">Catégorie</th>
+            <th class="px-4 py-3 text-center">Descriptif</th>
+            <th class="px-4 py-3 text-center">Temps</th>
+            <th class="px-4 py-3 text-center">Favoris</th>
+            <th class="px-4 py-3 text-center">Image</th>
+            <th class="px-4 py-3 text-center">Détails</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          {% for row in rows %}
+          <tr class="hover:bg-gray-100 transition">
+            <td class="px-4 py-4">{{ row.titre }}</td>
+            <td class="px-4 py-4">{{ row.categorie.nom }}</td>
+            <td class="px-4 py-4 text-center">{{ row.description }}</td>
+            <td class="px-4 py-4 text-center">{{ row.temps_preparation }} min</td>
+            <td class="px-4 py-4 text-center">
+              {% if row.id in favoris_ids %}
+                <span class="text-Red font-semibold">Oui</span>
+                <a href="{% url 'toggle_favoris' row.pk %}" 
+                   class="text-Red font-semibold hover:text-red-600 transition">
+                  Retirer
+                </a>
+              {% else %}
+                <span class="text-gray-400 font-semibold">Non</span>
+                <a href="{% url 'toggle_favoris' row.pk %}" 
+                   class="text-Blue font-semibold hover:text-teal-700 transition">
+                  Ajouter
+                </a>
+              {% endif %}
+            </td>
+            <td class="px-4 py-4 text-center">
+              {% if row.image %}
+                <img src="{{ row.image.url }}" alt="Recette" class="w-16 h-16 rounded-lg mx-auto">
+              {% else %}
                 <span class="text-gray-400 italic">Pas d'image</span>
-                {% endif %}
-              </td>
-              <td class="px-6 py-4 text-center">
-                <a href="{% url 'details' row.id %}" class="text-Blue font-semibold underline hover:text-blue-600">Voir la recette</a>
-              </td>            
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="6" class="px-6 py-4 text-center text-gray-500 italic">Aucune recette disponible.</td>
-            </tr>
-            {% endfor %}
-          </tbody>          
-        </table>
-      </div>
+              {% endif %}
+            </td>
+            <td class="px-4 py-4 text-center">
+              <a href="{% url 'details' row.id %}" 
+                 class="text-Blue font-semibold underline hover:text-teal-700 transition">
+                Voir
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="px-4 py-4 text-center text-gray-500 italic">
+              Aucune recette disponible.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
 
-      <!-- Back Link -->
-      <a href="/manage" class="mt-4 text-Blue font-semibold underline hover:text-blue-600">Ajouter une recette</a>
-      <a href="/favoris" class="mt-4 text-Blue font-semibold underline hover:text-blue-600">N'afficher que les favoris</a>
+    <!-- Liens additionnels -->
+    <div class="container mx-auto flex justify-center mt-6 space-x-6">
+      <a href="/manage" class="text-Blue font-semibold underline hover:text-teal-700 transition">
+        Ajouter une recette
+      </a>
+      <a href="/favoris" class="text-Blue font-semibold underline hover:text-teal-700 transition">
+        Afficher uniquement les favoris
+      </a>
     </div>
   </main>
+
 </body>
 </html>

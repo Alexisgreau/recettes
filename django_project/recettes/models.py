@@ -15,6 +15,8 @@ class Recette(models.Model):
         Categorie, on_delete=models.CASCADE, related_name='recettes'
     )  # Lien avec le modèle Categorie
     temps_preparation = models.IntegerField()
+    temps_cuisson = models.IntegerField()
+    ingredients = models.TextField()
     image = models.ImageField(upload_to='images/', null=True, blank=True)
 
     def __str__(self):

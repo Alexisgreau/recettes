@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Détails de la recette</title>
+  <title>{{ recette.titre }} - Détails de la recette</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -12,15 +12,17 @@
           colors: {
             Blue: '#2c7373', /* Bleu inspiré du logo */
             Red: '#ff7f50',  /* Rouge inspiré du logo */
+            LightGray: '#f7f8fa',
           },
         },
       },
     };
   </script>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-LightGray text-gray-800">
+
   <!-- Header -->
-  <header class="bg-Blue text-white py-6 shadow-lg">
+  <header class="bg-Blue text-white py-6 shadow-md">
     <div class="container mx-auto px-4 text-center">
       <h1 class="text-4xl font-extrabold tracking-wide">{{ recette.titre }}</h1>
       <p class="text-lg font-light mt-2">Découvrez tous les détails de cette recette</p>
@@ -28,55 +30,71 @@
   </header>
 
   <!-- Main Content -->
-  <main class="flex flex-col items-center justify-center p-4 min-h-screen">
-    <div class="flex flex-col items-center w-full max-w-4xl bg-white rounded-lg shadow-lg p-6">
+  <main class="container mx-auto my-10 px-4">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+      
       <!-- Image -->
       {% if recette.image %}
-      <div class="mb-6">
-        <img src="{{ recette.image.url }}" alt="Image de {{ recette.titre }}" class="w-full h-auto rounded-lg shadow">
+      <div class="w-full">
+        <img src="{{ recette.image.url }}" alt="Image de {{ recette.titre }}" 
+             class="w-full h-64 object-cover">
       </div>
       {% endif %}
+      
+      <!-- Contenu Principal -->
+      <div class="p-6">
+        <!-- Description -->
+        <section class="mb-6">
+          <h2 class="text-2xl font-bold text-Blue mb-2">Description</h2>
+          <p class="text-gray-700 leading-relaxed">{{ recette.description }}</p>
+        </section>
 
-      <!-- Description -->
-      <section class="mb-6 w-full">
-        <h2 class="text-2xl font-bold text-Blue mb-2">Description</h2>
-        <p class="text-gray-700">{{ recette.description }}</p>
-      </section>
+        <!-- Ingrédients -->
+        <section class="mb-6">
+          <h2 class="text-2xl font-bold text-Blue mb-2">Ingrédients</h2>
+          <ul class="list-disc pl-5 text-gray-700">
+            {% for ingredient in recette.ingredients.splitlines %}
+              <li>{{ ingredient }}</li>
+            {% empty %}
+              <li class="text-gray-500 italic">Aucun ingrédient spécifié.</li>
+            {% endfor %}
+          </ul>
+        </section>
 
-      <!-- Ingrédients -->
-      <section class="mb-6 w-full">
-        <h2 class="text-2xl font-bold text-Blue mb-2">Ingrédients</h2>
-        <ul class="list-disc pl-6 text-gray-700">
-          {% for ingredient in recette.ingredients.splitlines %}
-          <li>{{ ingredient }}</li>
-          {% empty %}
-          <li class="text-gray-500 italic">Aucun ingrédient spécifié.</li>
-          {% endfor %}
-        </ul>
-      </section>
+        <!-- Étapes -->
+        <section class="mb-6">
+          <h2 class="text-2xl font-bold text-Blue mb-2">Étapes</h2>
+          <p class="text-gray-700 leading-relaxed whitespace-pre-line">{{ recette.etapes }}</p>
+        </section>
 
-      <!-- Étapes -->
-      <section class="mb-6 w-full">
-        <h2 class="text-2xl font-bold text-Blue mb-2">Étapes</h2>
-        <p class="text-gray-700 whitespace-pre-line">{{ recette.etapes }}</p>
-      </section>
+        <!-- Informations Temps -->
+        <section class="grid grid-cols-2 gap-4 mb-6">
+          <div class="bg-LightGray p-4 rounded-md shadow-sm">
+            <h3 class="text-lg font-semibold text-Blue">Temps de Préparation</h3>
+            <p class="text-gray-700">{{ recette.temps_preparation }} minutes</p>
+          </div>
+          <div class="bg-LightGray p-4 rounded-md shadow-sm">
+            <h3 class="text-lg font-semibold text-Blue">Temps de Cuisson</h3>
+            <p class="text-gray-700">{{ recette.temps_cuisson }} minutes</p>
+          </div>
+        </section>
 
-      <!-- Temps -->
-      <section class="mb-6 w-full">
-        <h2 class="text-2xl font-bold text-Blue mb-2">Temps</h2>
-        <p class="text-gray-700"><strong>Préparation :</strong> {{ recette.temps_preparation }} minutes</p>
-        <p class="text-gray-700"><strong>Cuisson :</strong> {{ recette.temps_cuisson }} minutes</p>
-      </section>
+        <!-- Catégorie -->
+        <section class="mb-6">
+          <h2 class="text-2xl font-bold text-Blue mb-2">Catégorie</h2>
+          <p class="text-gray-700">{{ recette.categorie.nom }}</p>
+        </section>
 
-      <!-- Catégorie -->
-      <section class="mb-6 w-full">
-        <h2 class="text-2xl font-bold text-Blue mb-2">Catégorie</h2>
-        <p class="text-gray-700">{{ recette.categorie.nom }}</p>
-      </section>
-
-      <!-- Back Link -->
-      <a href="/" class="mt-4 text-Blue font-semibold underline hover:text-blue-600">Retour à la liste des recettes</a>
+        <!-- Bouton Retour -->
+        <div class="text-center mt-6">
+          <a href="/" 
+             class="inline-block bg-Blue text-white px-6 py-2 rounded-md shadow hover:bg-teal-700 transition">
+            Retour à la liste des recettes
+          </a>
+        </div>
+      </div>
     </div>
   </main>
+
 </body>
 </html>

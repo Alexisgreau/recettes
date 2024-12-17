@@ -118,3 +118,7 @@ def toggle_favoris(request, pk):
         # Si le favori existe déjà, on le supprime (toggle)
         favoris.delete()
     return redirect('home')  # Redirige vers la vue principale
+
+def fav_view(request):
+    recettes = Recette.objects.filter(favoris__user=request.user)
+    return render(request, 'favoris.html', {'rows': recettes})

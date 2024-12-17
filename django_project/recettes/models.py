@@ -7,19 +7,19 @@ class Categorie(models.Model):
     def __str__(self):
         return self.nom
 
-from django.contrib.auth.models import User
-from django.db import models
-
 # Modèle Recette existant
 class Recette(models.Model):
     titre = models.CharField(max_length=200)
     description = models.TextField()
-    categorie = models.CharField(max_length=50)
+    categorie = models.ForeignKey(
+        Categorie, on_delete=models.CASCADE, related_name='recettes'
+    )  # Lien avec le modèle Categorie
     temps_preparation = models.IntegerField()
     image = models.ImageField(upload_to='images/', null=True, blank=True)
 
     def __str__(self):
         return self.titre
+
 
 # Gestion des favoris
 class Favori(models.Model):

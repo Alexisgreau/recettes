@@ -87,7 +87,6 @@
               <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">Catégories</th>
               <th class="px-6 py-3 text-center font-medium uppercase tracking-wider">Descriptif</th>
               <th class="px-6 py-3 text-center font-medium uppercase tracking-wider">Temps</th>
-              <th class="px-6 py-3 text-center font-medium uppercase tracking-wider">Favoris</th>
               <th class="px-6 py-3 text-center font-medium uppercase tracking-wider">Image</th>
               <th class="px-6 py-3 text-center font-medium uppercase tracking-wider">Détails</th>
             </tr>
@@ -104,21 +103,6 @@
               </td>
               <td class="px-6 py-4 text-center">
                 {{ row.temps_preparation }} minutes
-              </td>
-              <td class="px-6 py-4 text-center">
-                {% if row.id in favoris_ids %}
-                  <span class="text-Red font-semibold">Oui</span>
-                  <a href="{% url 'toggle_favoris' row.pk %}"
-                     class="inline-block bg-Red text-white text-sm px-2 py-1 ml-2 rounded-md hover:bg-red-600 transition">
-                    Retirer des Favoris
-                  </a>
-                {% else %}
-                  <span class="text-gray-400 font-semibold">Non</span>
-                  <a href="{% url 'toggle_favoris' row.pk %}"
-                     class="inline-block bg-Blue text-white text-sm px-2 py-1 ml-2 rounded-md hover:bg-teal-700 transition">
-                    Ajouter aux Favoris
-                  </a>
-                {% endif %}
               </td>            
               <td class="px-6 py-4 text-center">
                 {% if row.image %}
@@ -139,10 +123,6 @@
           </tbody>          
         </table>
       </div>
-
-      <!-- Back Link -->
-      <a href="/manage" class="mt-4 text-Blue font-semibold underline hover:text-blue-600">Ajouter une recette</a>
-      <a href="/favoris" class="mt-4 text-Blue font-semibold underline hover:text-blue-600">N'afficher que les favoris</a>
     </div>
   </main>
 </body>

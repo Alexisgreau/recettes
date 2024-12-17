@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Categorie, Recette
+from .models import Categorie, Recette, Favori
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django import forms
@@ -8,8 +8,17 @@ from django.contrib.auth.models import User
 from django.conf import settings
 
 def home(request):
-    recettes = Recette.objects.all()  # Récupère toutes les recettes
-    return render(request, 'recettes.html', {'rows': recettes})
+    rows = Recette.objects.all()
+
+    # Vérifier si l'utilisateur est connecté pour récupérer ses favoris
+    if request.user.is_authenticated:
+        favoris_ids = Favori.objects.filter(user=request.user).values_list('recette_id', flat=True)
+        favoris_ids = [int(f) for f in favoris_ids]  # Force les IDs à être des entiers
+    else:
+        favoris_ids = []  # Aucun favori pour un utilisateur non connecté
+
+    # Renvoyer les données au template
+    return render(request, 'recettes.html', {'rows': rows, 'favoris_ids': favoris_ids})
 
 
 @login_required
@@ -99,3 +108,13 @@ def logout_view(request):
 
 def profile(request):
     return render(request, 'profile.html')
+
+@login_required
+def toggle_favoris(request, pk):
+    recette = get_object_or_404(Recette, pk=pk)
+    favoris, created = Favori.objects.get_or_create(user=request.user, recette=recette)
+
+    if not created:
+        # Si le favori existe déjà, on le supprime (toggle)
+        favoris.delete()
+    return redirect('home')  # Redirige vers la vue principale

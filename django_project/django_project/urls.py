@@ -33,4 +33,5 @@ urlpatterns = [
     path('toggle_favoris/<int:pk>', views.toggle_favoris, name='toggle_favoris'),
     path('favoris/', views.fav_view, name='favoris'),
     path('recette/<int:pk>/modifier/', views.modifier_recette, name='modifier_recette'),
+    path('recette/<int:recette_id>/note/', views.ajouter_note, name='ajouter_note'),
 ]

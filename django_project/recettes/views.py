@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Categorie, Recette, Favori
+from .models import Categorie, Recette, Favori, Note
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django import forms
@@ -80,7 +80,7 @@ def add_category(request):
     return render(request, 'manage_cat.html')
 
 def details(request, pk):
-    recette = Recette.objects.get(pk=pk)
+    recette = get_object_or_404(Recette, pk=pk)
     return render(request, 'details.html', {'recette': recette})
 
 class SignupForm(forms.ModelForm):
@@ -120,10 +120,12 @@ def toggle_favoris(request, pk):
         favoris.delete()
     return redirect('home')  # Redirige vers la vue principale
 
+@login_required
 def fav_view(request):
     recettes = Recette.objects.filter(favoris__user=request.user)
     return render(request, 'favoris.html', {'rows': recettes})
 
+@login_required
 def modifier_recette(request, pk):
     recette = get_object_or_404(Recette, pk=pk)
     if request.method == 'POST':
@@ -134,3 +136,17 @@ def modifier_recette(request, pk):
     else:
         form = RecetteForm(instance=recette)
     return render(request, 'modifier_recette.html', {'form': form, 'recette': recette})
+
+@login_required
+def ajouter_note(request, recette_id):
+    recette = get_object_or_404(Recette, id=recette_id)
+    if request.method == "POST":
+        valeur = int(request.POST.get('valeur'))  # Récupère la note depuis le formulaire
+        note, created = Note.objects.update_or_create(
+            user=request.user,
+            recette=recette,
+            defaults={'valeur': valeur}
+        )
+        # Met à jour la moyenne des notes
+        recette.update_note_moyenne()
+    return redirect('details', pk=recette.id)

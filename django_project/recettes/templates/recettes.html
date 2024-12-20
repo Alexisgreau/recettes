@@ -81,6 +81,7 @@
             <th class="px-4 py-3 text-center">Descriptif</th>
             <th class="px-4 py-3 text-center">Temps</th>
             <th class="px-4 py-3 text-center">Favoris</th>
+            <th class="px-4 py-3 text-center">Note</th>
             <th class="px-4 py-3 text-center">Image</th>
             <th class="px-4 py-3 text-center">Détails</th>
           </tr>
@@ -106,6 +107,18 @@
                   Ajouter
                 </a>
               {% endif %}
+            </td>
+            <td class="px-4 py-4 text-center">
+              <p class="text-lg font-bold text-Blue">Note moyenne :</p>
+              <div class="flex space-x-1 mt-1">
+                {% for i in "12345" %}
+                  {% if recette.note_moyenne >= forloop.counter %}
+                    <span class="text-Red text-3xl">&#9733;</span>
+                  {% else %}
+                    <span class="text-gray-400 text-3xl">&#9733;</span>
+                  {% endif %}
+                {% endfor %}
+              </div>
             </td>
             <td class="px-4 py-4 text-center">
               {% if row.image %}

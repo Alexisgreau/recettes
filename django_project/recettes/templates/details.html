@@ -84,7 +84,31 @@
           <h2 class="text-2xl font-bold text-Blue mb-2">Catégorie</h2>
           <p class="text-gray-700">{{ recette.categorie.nom }}</p>
         </section>
+        
+        <!-- Note -->
+        <section class="mb-6">
+          <h2 class="text-2xl font-bold text-Blue mb-2">Note</h2>
+          <p class="text-gray-700">{{ recette.note }}</p>
+        </section>
 
+        <div class="mt-6">
+          <p class="text-lg font-bold text-Blue">Donner une note :</p>
+          <form id="rating-form" method="POST" action="{% url 'ajouter_note' recette.id %}">
+            {% csrf_token %}
+            <div class="rating flex space-x-1 mt-2">
+              <!-- Étoiles -->
+              {% for i in "12345" %}
+              <input type="radio" name="valeur" value="{{ i }}" id="star{{ i }}" class="hidden">
+              <label for="star{{ i }}" class="cursor-pointer text-gray-400 text-3xl hover:text-yellow-400">&#9733;</label>
+              {% endfor %}
+            </div>
+            <button type="submit" 
+                    class="mt-4 bg-Blue text-white px-4 py-2 rounded-md shadow hover:bg-teal-700 transition">
+              Soumettre
+            </button>
+          </form>
+        </div>
+        
         <!-- Bouton Retour -->
         <div class="text-center mt-6">
           <a href="/" 
@@ -102,6 +126,37 @@
       </div>
     </div>
   </main>
-
+  <script>
+    // Sélection des étoiles
+    const stars = document.querySelectorAll('.rating label');
+    const form = document.getElementById('rating-form');
+  
+    stars.forEach((star, index) => {
+      star.addEventListener('mouseover', () => {
+        // Appliquer la classe active à toutes les étoiles précédentes
+        stars.forEach((s, i) => {
+          s.classList.toggle('text-yellow-400', i <= index);
+          s.classList.toggle('text-gray-400', i > index);
+        });
+      });
+  
+      star.addEventListener('mouseleave', () => {
+        // Réinitialiser les couleurs si aucune étoile n'est sélectionnée
+        const selected = form.querySelector('input:checked');
+        stars.forEach((s, i) => {
+          s.classList.toggle('text-yellow-400', selected && i <= selected.value - 1);
+          s.classList.toggle('text-gray-400', !selected || i > selected.value - 1);
+        });
+      });
+  
+      star.addEventListener('click', () => {
+        // Marquer l'étoile sélectionnée
+        stars.forEach((s, i) => {
+          s.classList.toggle('text-yellow-400', i <= index);
+          s.classList.toggle('text-gray-400', i > index);
+        });
+      });
+    });
+  </script>  
 </body>
 </html>

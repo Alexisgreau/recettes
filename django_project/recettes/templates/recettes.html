@@ -112,12 +112,13 @@
               <p class="text-lg font-bold text-Blue">Note moyenne :</p>
               <div class="flex space-x-1 mt-1">
                 {% for i in "12345" %}
-                  {% if recette.note_moyenne >= forloop.counter %}
+                  {% if row.note_moyenne >= forloop.counter %}
                     <span class="text-Red text-3xl">&#9733;</span>
                   {% else %}
                     <span class="text-gray-400 text-3xl">&#9733;</span>
                   {% endif %}
                 {% endfor %}
+                <span class="text-gray-400 text-3xl">({{ row.note_moyenne }})</span>
               </div>
             </td>
             <td class="px-4 py-4 text-center">

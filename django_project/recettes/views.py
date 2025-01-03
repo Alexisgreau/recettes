@@ -140,13 +140,13 @@ def modifier_recette(request, pk):
 @login_required
 def ajouter_note(request, recette_id):
     recette = get_object_or_404(Recette, id=recette_id)
-    if request.method == "POST":
-        valeur = int(request.POST.get('valeur'))  # Récupère la note depuis le formulaire
+    valeur = int(request.POST.get('note'))
+
+    if 1 <= valeur <= 5:  # Vérifie que la note est entre 1 et 5
         note, created = Note.objects.update_or_create(
-            user=request.user,
+            utilisateur=request.user,
             recette=recette,
             defaults={'valeur': valeur}
         )
-        # Met à jour la moyenne des notes
-        recette.update_note_moyenne()
+        recette.update_note_moyenne()  # Met à jour la moyenne
     return redirect('details', pk=recette.id)

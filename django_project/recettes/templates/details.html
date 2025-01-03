@@ -91,23 +91,23 @@
           <p class="text-gray-700">{{ recette.note }}</p>
         </section>
 
-        <div class="mt-6">
-          <p class="text-lg font-bold text-Blue">Donner une note :</p>
-          <form id="rating-form" method="POST" action="{% url 'ajouter_note' recette.id %}">
-            {% csrf_token %}
-            <div class="rating flex space-x-1 mt-2">
-              <!-- Étoiles -->
-              {% for i in "12345" %}
-              <input type="radio" name="valeur" value="{{ i }}" id="star{{ i }}" class="hidden">
-              <label for="star{{ i }}" class="cursor-pointer text-gray-400 text-3xl hover:text-yellow-400">&#9733;</label>
-              {% endfor %}
-            </div>
-            <button type="submit" 
-                    class="mt-4 bg-Blue text-white px-4 py-2 rounded-md shadow hover:bg-teal-700 transition">
+        <form method="POST" action="{% url 'ajouter_note' recette.id %}" class="mt-4">
+          {% csrf_token %}
+          <label for="note" class="block text-lg font-medium text-gray-700">Note :</label>
+          <select name="note" id="note" required
+                  class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-Blue focus:outline-none mb-4">
+              <option value="" disabled selected>Choisir une note</option>
+              <option value="1">1 étoile</option>
+              <option value="2">2 étoiles</option>
+              <option value="3">3 étoiles</option>
+              <option value="4">4 étoiles</option>
+              <option value="5">5 étoiles</option>
+          </select>
+          <button type="submit" class="bg-Blue text-white py-2 px-4 rounded-lg shadow hover:bg-blue-700 transition">
               Soumettre
-            </button>
-          </form>
-        </div>
+          </button>
+        </form>
+      
         
         <!-- Bouton Retour -->
         <div class="text-center mt-6">

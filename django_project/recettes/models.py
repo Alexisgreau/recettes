@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from numpy import sum
 
 class Categorie(models.Model):
     nom = models.CharField(max_length=100, unique=True)  # Le nom de la catégorie doit être unique
@@ -25,14 +26,12 @@ class Recette(models.Model):
         return self.titre
     
     def update_note_moyenne(self):
-        notes = self.notes.all()
-        total_notes = notes.count()
-        if total_notes > 0:
-            moyenne = sum(note.valeur for note in notes) / total_notes
-            self.note_moyenne = round(moyenne, 2)
+        notes = Note.objects.filter(recette=self).values_list('valeur', flat=True)
+        if notes:
+            self.note_moyenne = round(sum(notes) / len(notes), 2)  # Arrondit à 2 décimales
         else:
-            self.note_moyenne = 0.0  # Aucune note, la moyenne est 0
-        self.save()  # Sauvegarde les changements
+            self.note_moyenne = 0.0  # Pas de notes, moyenne à 0
+        self.save()
 
 
 
@@ -53,13 +52,17 @@ class Favori(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.recette.titre}"
     
+from django.db import models
+from django.contrib.auth.models import User
+from .models import Recette
+
 class Note(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notes')
+    utilisateur = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notes')
     recette = models.ForeignKey(Recette, on_delete=models.CASCADE, related_name='notes')
-    valeur = models.IntegerField(default=1)  # Valeur de la note (ex: 1 à 5)
+    valeur = models.PositiveSmallIntegerField(choices=[(i, i) for i in range(1, 6)])
 
     class Meta:
-        unique_together = ('user', 'recette')  # Un utilisateur ne peut noter qu'une fois par recette
+        unique_together = ('utilisateur', 'recette')  # Empêche plusieurs notes par utilisateur pour une recette
 
     def __str__(self):
-        return f"{self.user.username} - {self.recette.titre} : {self.valeur}"
+        return f"{self.valeur} étoile(s) par {self.utilisateur.username} pour {self.recette.titre}"

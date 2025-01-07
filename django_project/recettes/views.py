@@ -80,7 +80,12 @@ def add_category(request):
     return render(request, 'manage_cat.html')
 
 def details(request, pk):
-    recette = get_object_or_404(Recette, pk=pk)
+    recette = get_object_or_404(Recette, id=pk)
+
+    # Incrémenter le compteur de visites
+    recette.visites = recette.visites + 1  # ou recette.visites += 1
+    recette.save()
+
     return render(request, 'details.html', {'recette': recette})
 
 class SignupForm(forms.ModelForm):
@@ -150,15 +155,6 @@ def ajouter_note(request, recette_id):
         )
         recette.update_note_moyenne()  # Met à jour la moyenne
     return redirect('details', pk=recette.id)
-
-def recette_detail(request, pk):
-    recette = get_object_or_404(Recette, id=pk)
-
-    # Incrémente le compteur de visites
-    recette.visites += 1
-    recette.save()
-
-    return render(request, 'details.html', {'recette': recette})
 
 from django.shortcuts import render
 from .models import Recette

@@ -70,6 +70,7 @@
              placeholder="Rechercher une recette..." 
              class="w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:ring-2 focus:ring-Blue focus:outline-none">
     </div>
+       
 
     <!-- Table des recettes -->
     <div class="container mx-auto bg-white shadow-md rounded-lg overflow-hidden">
@@ -154,6 +155,9 @@
       <a href="/favoris" class="text-Blue font-semibold underline hover:text-teal-700 transition">
         Afficher uniquement les favoris
       </a>
+      <a href="{% url 'recettes_tendances' %}" class="text-Blue font-semibold underline hover:text-blue-600">
+        Voir les Recettes par Tendances
+      </a>      
     </div>
   </main>
 

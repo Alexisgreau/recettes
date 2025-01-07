@@ -21,6 +21,11 @@ class Recette(models.Model):
     etapes = models.TextField()
     image = models.ImageField(upload_to='images/', null=True, blank=True)
     note_moyenne = models.FloatField(default=0.0)
+    visites = models.PositiveIntegerField(default=0)
+
+    def score_tendance(self):
+        # Exemple de calcul de score : somme des visites et note moyenne pondérée
+        return self.visites + (self.note_moyenne * 10)
 
     def __str__(self):
         return self.titre
@@ -32,9 +37,6 @@ class Recette(models.Model):
         else:
             self.note_moyenne = 0.0  # Pas de notes, moyenne à 0
         self.save()
-
-
-
 
 # Gestion des favoris
 class Favori(models.Model):
@@ -52,9 +54,6 @@ class Favori(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.recette.titre}"
     
-from django.db import models
-from django.contrib.auth.models import User
-from .models import Recette
 
 class Note(models.Model):
     utilisateur = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notes')

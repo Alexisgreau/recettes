@@ -150,3 +150,24 @@ def ajouter_note(request, recette_id):
         )
         recette.update_note_moyenne()  # Met à jour la moyenne
     return redirect('details', pk=recette.id)
+
+def recette_detail(request, pk):
+    recette = get_object_or_404(Recette, id=pk)
+
+    # Incrémente le compteur de visites
+    recette.visites += 1
+    recette.save()
+
+    return render(request, 'details.html', {'recette': recette})
+
+from django.shortcuts import render
+from .models import Recette
+
+def recettes_tendances(request):
+    # Récupérer toutes les recettes
+    recettes = Recette.objects.all()
+
+    # Calculer le score de tendance pour chaque recette et les trier
+    recettes = sorted(recettes, key=lambda r: r.score_tendance(), reverse=True)
+
+    return render(request, 'recettes_tendances.html', {'recettes': recettes})
